@@ -4,7 +4,7 @@ Apiserver
 controller Management 
     - node controller (every 5min will check the status of node and inform to ApiServer)
     - pod controller (every 30 will check the sattus of pod, if the node is unreachable for next 40sec then will wait for 5min and rechedule the pod into deiffernt node)
-Scheduler (decide pod scheduilng on node )
+      Scheduler (decide pod scheduilng on node )
 
 etcd
 
