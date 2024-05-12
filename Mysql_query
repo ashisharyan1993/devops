@@ -1,0 +1,79 @@
+show databases --> all Db 
+
+create database demo;
+use demo; --> to connect db
+
+create table student(name varchar(20),id int not null primary key, address varchar(20),marks int);
+
+desc student;
+
+show table;
+
+insert into student(marks,id,name,address) values(78,1,'ashish','bangalore');
+
+insert into student values('ram',2,'ban',45),('ram',3,'ban',45);
+
+select * from student;
+
+select name,id from student;
+
+select * from student where id=1;
+
+select * from select;
+
+update student set address='blr' where id=1;
+
+alter table student add phoneNo int; (add new column into table);
+
+desc student;
+
+alter table student modify column name varchar(50);
+
+-- DDL command - data defination Language command 
+
+alter table student drop cloumn phoneNo;
+
+-- DML command (data delete) 
+delete from table student where id=1;
+
+select sum(marks) from student;
+
+select avg(marks) from student;
+
+select count(name) from student;
+
+select max(marks) from student;
+
+select min(marks) from student;
+
+select * from student order by id ; --(assending order)
+
+select * from student order by id desc; --(desending order)
+
+select * from student where name like 'r%';  
+
+select * from student where name like '%h';
+
+select * from student where name like '_a%';
+
+select * from student where name like '%s_';
+
+-- JOIN
+-- student table 
+-- employee table 
+
+select * from student inner join employee on student.id=employee.id; --(complete match)
+
+select * from student left join employee on student.id=employee.id; --(left table and match from right)
+
+select * from student right join employee on student.id=employee.id; --(right table and match with left table)
+
+select * from student cross join employee;
+
+-- Group by
+select count(id) ,fname, lname from student group by lname;
+select count(id) ,fname, lname from student group by lname order by lname desc;
+
+-- DDL - Create,drop alter,truncate,comment,rename
+-- DML - Insert , update , delete , Lock
+-- DQl - select 

@@ -1,0 +1,5 @@
+tenancy_ocid = "ocid1.tenancy.oc1..aaaaaaaaqitjiiy2rwxnzhpcdxlvzmxkl2x7ki6doky2jqptm7uhfz7u6gpa"
+user_ocid = "ocid1.user.oc1..aaaaaaaaoplle5hawhuxfrbm6hywirvdgdqh56ff6u4wedw2qvz7nzdhzcka" 
+private_key_path = "terraform_private.pem"
+fingerprint = "4d:68:23:96:d1:cb:54:db:7b:79:3f:19:a6:eb:4b:cb"
+region = "ap-mumbai-1"

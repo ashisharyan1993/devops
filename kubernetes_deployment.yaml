@@ -1,0 +1,133 @@
+apiVersion: v1
+data:
+  bucket: mlops-api
+  kiba_host: https://ai-platform-gateway.istio-system/pipeline
+  kiba_namespace: ml-team
+  kiba_url: istio-ingressgateway.istio-system:80
+  pipeline_id: de1f133d-13dd-4200-933d-99df324cd7cb
+kind: ConfigMap
+metadata:
+  name: nia-customer-segmentation-backend-configmap
+  namespace: kubeflow
+---
+apiVersion: v1
+data:
+  DB_PASSWORD: dGVzdA==
+  DB_SCHEMA: c3ltX21sb3BzX215c3Fs
+  DB_SERVER: a2F0aWItbXlzcWw6MzMwNg==
+  DB_USERNAME: cm9vdA==
+  aws_access_key_id: MzFGTU9CUlZRSEtERlVLNFowWTU=
+  aws_secret_access_key: SUYwaXBiUExWRmhFaDBRSGhaTkJETjJ2V2RtY2ZEMjN3bXNxSzUrNA==
+  minio_endpoint: aHR0cHM6Ly9kYXRhbGFrZS1zdGFnaW5nLnJtbmtpYmEubG9jYWw=
+kind: Secret
+metadata:
+  name: nia-customer-segmentation-backend-secret
+  namespace: kubeflow
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rmdp-ai-nia-customer-segmentation
+  name: rmdp-ai-nia-customer-segmentation
+  namespace: kubeflow
+spec:
+  ports:
+  - port: 8888
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: rmdp-ai-nia-customer-segmentation
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: rmdp-ai-nia-customer-segmentation
+  name: rmdp-ai-nia-customer-segmentation
+  namespace: kubeflow
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: rmdp-ai-nia-customer-segmentation
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: rmdp-ai-nia-customer-segmentation
+    spec:
+      containers:
+      - command:
+        - sh
+        - -c
+        - |
+          update-ca-certificates;
+          cat /etc/ssl/certs/minio.pem >> /usr/local/lib/python3.9/site-packages/certifi/cacert.pem;
+          update-ca-certificates;
+          cat /etc/ssl/certs/ingress-ca.pem >> /usr/local/lib/python3.9/site-packages/certifi/cacert.pem;
+          update-ca-certificates;
+          uvicorn app.main:app --host '::' --port "80"
+        envFrom:
+        - secretRef:
+            name: nia-customer-segmentation-backend-secret
+        - configMapRef:
+            name: nia-customer-segmentation-backend-configmap
+        image: kldev-docker.slb-wartifactory-v.stg.rmn.local/rakuten/data-lake/ai-platform/jenkinsbuild/sym-mlops-backend:v0.0.119
+        imagePullPolicy: IfNotPresent
+        name: ai-nia-customer-segmentation
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  labels:
+    app: rmdp-ai-nia-customer-segmentation
+  name: rmdp-ai-nia-customer-segmentation
+  namespace: kubeflow
+spec:
+  gateways:
+  - kubeflow-gateway
+  hosts:
+  - '*'
+  http:
+  - match:
+    - uri:
+        prefix: /nia-customer-segmentation/
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: rmdp-ai-nia-customer-segmentation.kubeflow.svc.cluster.local
+        port:
+          number: 8888
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  labels:
+    app: rmdp-ai-nia-customer-segmentation
+  name: rmdp-ai-nia-customer-segmentation
+  namespace: kubeflow
+spec:
+  action: ALLOW
+  rules:
+  - {}
+  selector:
+    matchLabels:
+      app: rmdp-ai-nia-customer-segmentation

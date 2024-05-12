@@ -1,0 +1,57 @@
+master
+==========
+Apiserver 
+controller Management 
+    - node controller (every 5min will check the status of node and inform to ApiServer)
+    - pod controller (every 30 will check the sattus of pod, if the node is unreachable for next 40sec then will wait for 5min and rechedule the pod into deiffernt node)
+Scheduler (decide pod scheduilng on node )
+
+etcd
+
+Worker
+===========
+kubelet (pod create/delete on node)
+kubeproxy (network connectivity between different node)
+
+container run time 
+=============
+docker /rocket
+
+
+kubectl get ns (namespace)
+kubectl apply -f deployment.yaml -n namespace
+
+kubectl get pod -n namespace -o wide 
+kubectl explain pod/deployment/services
+kubectl describe pod <pod_name> -n namespace
+
+kubectl -- event (scheduler --> kubelet)
+
+kubectl get node 
+
+kubectl get pod -n namespace -w (watch)
+kubectl delete pod pod_name -n namespace ( it will delete the pod and create the new - we can use this to restart the pod as well)
+
+kubectl create -f app.yaml -n namespace 
+kubect apply -f app.yaml -n namespace
+
+yaml
+=======
+
+
+kubectl get pod pod_name --show-lables
+kubectl edit pod pod_name 
+
+services
+=============
+ClusterIp  (within Cluster)
+nodePort (to access outside)
+LB service ( we can create internal and cloud provider LB)
+kubectl get svc -n namespace
+kubectl expose pod podname --port = 8000 --target-port = 80 -- name service_name
+kubectl expose pod pod_name --type = nodeport --port = 8000 --target-port = 80 --name service_name
+
+kubectl scale rc --replica=5 rc_name
+
+
+

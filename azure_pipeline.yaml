@@ -1,0 +1,33 @@
+trigger: 
+- master
+
+pool: 
+  vmImages: ubuntu:latest
+
+stages:
+  - stage: A
+    jobs: 
+      - job: Ajob
+        steps:
+          - script: echo "AcceptA"
+
+
+---
+pool:
+  vmImage: ubuntu:latest
+stages:
+  - stage: StageA
+    displayName: "This is Stage A"
+    jobs: A
+    -job: A
+    -job: A2
+  - stage: stageB
+    displayName: "This is Stage B"
+    jobs: B
+    -job: B
+    -job: B2
+
+steps:
+- script: echo "Hello World!"
+  displayName: "Run a script without stage"
+- bash: echo "Hello World!"
